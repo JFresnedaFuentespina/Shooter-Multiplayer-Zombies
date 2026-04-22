@@ -15,9 +15,6 @@ public class MouseLook : MonoBehaviour
     {
         pauseBehaviour = FindAnyObjectByType<PauseManager>();
         pauseBehaviour.isPaused = false;
-        
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     // Update is called once per frame

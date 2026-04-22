@@ -10,17 +10,19 @@ public class Shooter : MonoBehaviour
     public AudioClip shootSound;
     public Animator animator;
     public float range = 100f;
+    private PauseManager pauseManager;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = shootSound;
         muzzleFlashParticleSystem = muzzleFlash.GetComponent<ParticleSystem>();
+        pauseManager = FindAnyObjectByType<PauseManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && !pauseManager.isPaused)
         {
             Shoot();
         }
@@ -30,7 +32,7 @@ public class Shooter : MonoBehaviour
     {
         audioSource.Play();
         animator.SetTrigger("Shoot");
-        
+
         muzzleFlashParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
         muzzleFlashParticleSystem.Play();
 
