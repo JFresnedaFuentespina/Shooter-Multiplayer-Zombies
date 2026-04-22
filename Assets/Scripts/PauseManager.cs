@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PauseManager : MonoBehaviour
@@ -12,7 +13,7 @@ public class PauseManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        
+
         resume.onClick.AddListener(ResumeGame);
         exit.onClick.AddListener(ExitGame);
     }
@@ -37,7 +38,7 @@ public class PauseManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        
+
         Time.timeScale = 0f; // Pause the game
         pauseMenu.SetActive(true); // Show the pause menu
         isPaused = true;
@@ -55,6 +56,6 @@ public class PauseManager : MonoBehaviour
 
     void ExitGame()
     {
-        Application.Quit(); // Exit the game
+        SceneManager.LoadScene("MainMenu");
     }
 }

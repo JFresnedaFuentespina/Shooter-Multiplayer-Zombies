@@ -9,10 +9,12 @@ public class MovePlayer : MonoBehaviour
 
     private CharacterController controller;
     private Vector3 velocity;
+    private GameOverManager gameOverManager;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        gameOverManager = FindAnyObjectByType<GameOverManager>();
     }
 
     void Update()
@@ -36,5 +38,17 @@ public class MovePlayer : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Zombie"))
+        {
+            Debug.Log("Player hit by zombie!");
+            if (gameOverManager != null)
+            {
+                gameOverManager.ShowMenu();
+            }
+        }
     }
 }

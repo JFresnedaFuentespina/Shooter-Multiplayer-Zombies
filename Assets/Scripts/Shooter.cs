@@ -11,18 +11,23 @@ public class Shooter : MonoBehaviour
     public Animator animator;
     public float range = 100f;
     private PauseManager pauseManager;
+    private GameOverManager gameOverManager;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = shootSound;
         muzzleFlashParticleSystem = muzzleFlash.GetComponent<ParticleSystem>();
         pauseManager = FindAnyObjectByType<PauseManager>();
+        gameOverManager = FindAnyObjectByType<GameOverManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && !pauseManager.isPaused)
+        if (pauseManager.isPaused) return;
+        if (gameOverManager.isPaused) return;
+
+        if (Input.GetMouseButtonDown(0))
         {
             Shoot();
         }
