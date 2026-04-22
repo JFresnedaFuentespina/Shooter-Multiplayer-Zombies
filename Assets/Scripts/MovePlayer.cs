@@ -5,24 +5,44 @@ public class MovePlayer : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public float speed = 5f;
     public float jumpForce = 1f;
-    Vector2 velocity;
-    private Rigidbody rb;
+
+    private CharacterController controller;
+    private Vector3 velocity;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
+        controller = GetComponent<CharacterController>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        Vector3 move = transform.right * x + transform.forward * z;
+        controller.Move(move * speed * Time.deltaTime);
+        bool isGroundedCustom = controller.isGrounded || Physics.Raycast(transform.position, Vector3.down, 1.2f);
+
+        if (isGroundedCustom && velocity.y < 0)
         {
-            rb.AddForce(Vector2.up * jumpForce, ForceMode.Impulse);
+            velocity.y = -2f;
         }
 
-        velocity.y = Input.GetAxis("Vertical") * speed * Time.deltaTime;
-        velocity.x = Input.GetAxis("Horizontal") * speed * Time.deltaTime;
-        transform.Translate(velocity.x, 0, velocity.y);
+        if (Input.GetButtonDown("Jump") && isGroundedCustom)
+        {
+            velocity.y = Mathf.Sqrt(jumpForce * -2f * Physics.gravity.y);
+        }
+
+        if (isGroundedCustom)
+        {
+            Debug.Log("Player is grounded");
+        }
+        else
+        {
+            Debug.Log("Player is not grounded");
+        }
+
+        velocity.y += Physics.gravity.y * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
     }
 }

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class RotatePlayer : MonoBehaviour
+public class MouseLook : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public float speed = 2f;
@@ -29,7 +29,7 @@ public class RotatePlayer : MonoBehaviour
 
         transform.Rotate(Vector3.up, mouseX * mouseSensitivity);
         verticalRotation -= mouseY * mouseSensitivity;
-        verticalRotation = Mathf.Clamp(verticalRotation, -20f, 20f);
+        verticalRotation = Mathf.Clamp(verticalRotation, -80f, 80f);
         cameraTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
         gunTransform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
     }
