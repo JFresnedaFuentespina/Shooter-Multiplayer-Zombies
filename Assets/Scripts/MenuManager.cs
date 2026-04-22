@@ -10,10 +10,9 @@ public class MenuManager : MonoBehaviour
     public NetworkingManager networkingManager;
     void Start()
     {
-        multiplayer.interactable = false;
         play.onClick.AddListener(RestartGame);
         exit.onClick.AddListener(ExitGame);
-        multiplayer.onClick.AddListener(Multiplayer);
+        multiplayer.onClick.AddListener(LoadMultiplayerMenu);
     }
 
     void RestartGame()
@@ -21,9 +20,9 @@ public class MenuManager : MonoBehaviour
         SceneManager.LoadScene("SampleScene");
     }
 
-    void Multiplayer()
+    void LoadMultiplayerMenu()
     {
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("MultiplayerMenu");
     }
 
     void ExitGame()
