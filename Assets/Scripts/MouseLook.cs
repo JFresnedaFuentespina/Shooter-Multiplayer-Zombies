@@ -9,13 +9,13 @@ public class MouseLook : MonoBehaviour
     public float mouseSensitivity = 2f;
     private float verticalRotation = 0f;
 
-    // public GameObject pauseManager;
-    // private PauseMenuBehaviour pauseBehaviour;
+    private PauseManager pauseBehaviour;
 
     void Start()
     {
-        // pauseBehaviour = pauseManager.GetComponent<PauseMenuBehaviour>();
-        // pauseBehaviour.isPaused = false;
+        pauseBehaviour = FindAnyObjectByType<PauseManager>();
+        pauseBehaviour.isPaused = false;
+        
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -23,7 +23,7 @@ public class MouseLook : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // if (pauseBehaviour.isPaused) return;
+        if (pauseBehaviour.isPaused) return;
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");
 
