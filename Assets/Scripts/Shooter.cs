@@ -9,7 +9,7 @@ public class Shooter : MonoBehaviour
     private AudioSource audioSource;
     public AudioClip shootSound;
     public Animator animator;
-    public float range = 5f;
+    public float range = 100f;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
