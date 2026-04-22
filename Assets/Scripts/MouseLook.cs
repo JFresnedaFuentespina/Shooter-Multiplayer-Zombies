@@ -9,21 +9,13 @@ public class MouseLook : MonoBehaviour
     public float mouseSensitivity = 2f;
     private float verticalRotation = 0f;
 
-    private PauseManager pauseManager;
-    private GameOverManager gameOverManager;
-
-    void Start()
-    {
-        pauseManager = FindAnyObjectByType<PauseManager>();
-
-        gameOverManager = FindAnyObjectByType<GameOverManager>();
-    }
+    void Start() { }
 
     // Update is called once per frame
     void Update()
     {
-        if (pauseManager.isPaused) return;
-        if (gameOverManager.isPaused) return;
+        if (PauseManager.Instance.isPaused) return;
+        if (GameOverManager.Instance.isPaused) return;
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");

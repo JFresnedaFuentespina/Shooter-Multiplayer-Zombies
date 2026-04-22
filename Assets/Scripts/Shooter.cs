@@ -10,22 +10,18 @@ public class Shooter : MonoBehaviour
     public AudioClip shootSound;
     public Animator animator;
     public float range = 100f;
-    private PauseManager pauseManager;
-    private GameOverManager gameOverManager;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = shootSound;
         muzzleFlashParticleSystem = muzzleFlash.GetComponent<ParticleSystem>();
-        pauseManager = FindAnyObjectByType<PauseManager>();
-        gameOverManager = FindAnyObjectByType<GameOverManager>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (pauseManager.isPaused) return;
-        if (gameOverManager.isPaused) return;
+        if (PauseManager.Instance.isPaused) return;
+        if (GameOverManager.Instance.isPaused) return;
 
         if (Input.GetMouseButtonDown(0))
         {
@@ -44,7 +40,6 @@ public class Shooter : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, range))
         {
-            Debug.Log("Hit: " + hit.transform.name);
             ZombieLife zombie = hit.transform.GetComponentInParent<ZombieLife>();
 
             if (zombie != null)

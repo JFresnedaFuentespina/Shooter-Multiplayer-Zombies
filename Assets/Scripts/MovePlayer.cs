@@ -3,9 +3,12 @@ using UnityEngine;
 public class MovePlayer : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public float speed = 5f;
+    public float speed;
     public float jumpForce = 1f;
     public float gravity = -9.81f;
+
+    public float walkSpeed = 5f;
+    public float runSpeed = 10f;
 
     private CharacterController controller;
     private Vector3 velocity;
@@ -22,9 +25,20 @@ public class MovePlayer : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z;
-        controller.Move(move * speed * Time.deltaTime);
         bool isGroundedCustom = controller.isGrounded || Physics.Raycast(transform.position, Vector3.down, 1.2f);
+
+        Vector3 move = transform.right * x + transform.forward * z;
+
+        if (Input.GetKey(KeyCode.LeftShift) && isGroundedCustom)
+        {
+            speed = runSpeed;
+        }
+        else
+        {
+            speed = walkSpeed;
+        }
+
+        controller.Move(move * speed * Time.deltaTime);
 
         if (isGroundedCustom && velocity.y < 0)
         {
