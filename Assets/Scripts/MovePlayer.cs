@@ -5,6 +5,7 @@ public class MovePlayer : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public float speed = 5f;
     public float jumpForce = 1f;
+    public float gravity = -9.81f;
 
     private CharacterController controller;
     private Vector3 velocity;
@@ -42,7 +43,7 @@ public class MovePlayer : MonoBehaviour
             Debug.Log("Player is not grounded");
         }
 
-        velocity.y += Physics.gravity.y * Time.deltaTime;
+        velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }
 }
