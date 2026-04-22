@@ -34,15 +34,6 @@ public class MovePlayer : MonoBehaviour
             velocity.y = Mathf.Sqrt(jumpForce * -2f * Physics.gravity.y);
         }
 
-        if (isGroundedCustom)
-        {
-            Debug.Log("Player is grounded");
-        }
-        else
-        {
-            Debug.Log("Player is not grounded");
-        }
-
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
     }

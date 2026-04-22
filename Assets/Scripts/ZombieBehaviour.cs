@@ -10,8 +10,9 @@ public class ZombieBehaviour : MonoBehaviour
     public ZombieLife zombieLife;
     public float moveSpeed = 5f;
     public float attackRange = 1.5f;
-    private enum STATE { IDLE, PURSUE, ATTACK }
+    private enum STATE { IDLE, PURSUE, ATTACK, DIE }
     private STATE currentState = STATE.IDLE;
+    public bool alreadyDead = false;
 
     void Start()
     {
@@ -25,10 +26,12 @@ public class ZombieBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!zombieLife.isAlive)
+        if (!zombieLife.isAlive && !alreadyDead)
         {
-            animator.SetBool("run", false);
-            agent.isStopped = true;
+            Stop();
+            animator.SetTrigger("death");
+            currentState = STATE.DIE;
+            alreadyDead = true;
             return;
         }
         Process();
@@ -36,6 +39,7 @@ public class ZombieBehaviour : MonoBehaviour
 
     private void Process()
     {
+        if (currentState == STATE.DIE) return;
         switch (currentState)
         {
             case STATE.IDLE:
@@ -86,5 +90,11 @@ public class ZombieBehaviour : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, playerTransform.position);
         return distance <= attackRange;
+    }
+
+    public void Stop()
+    {
+        animator.SetBool("run", false);
+        agent.isStopped = true;
     }
 }

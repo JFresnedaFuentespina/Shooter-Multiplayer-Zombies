@@ -616,8 +616,8 @@ Transform:
   - {fileID: 2614672929532212333}
   - {fileID: 2614672929379366216}
   - {fileID: 9070347542076670637}
-  - {fileID: 6659614631455237010}
   - {fileID: 1606627921701501674}
+  - {fileID: 6659614631455237010}
   - {fileID: 6024004123830902126}
   - {fileID: 6748944185890187741}
   - {fileID: 309310257498873715}
@@ -2960,6 +2960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MovePlayer
   speed: 5
   jumpForce: 5
+  gravity: -9.81
 --- !u!114 &8685414333574075864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3036,7 +3037,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60681dcafb982724193e04a4c2e5c67b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  bulletSpawnPoint: {fileID: 1348199792113975246}
+  playerCamera: {fileID: 0}
+  range: 5
 --- !u!4 &1606627921701501674 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1074947139545082700, guid: d6834fe065295814d8d657cc943fffec, type: 3}
