@@ -4,10 +4,13 @@ public class Shooter : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public GameObject playerCamera;
+    private AudioSource audioSource;
+    public AudioClip shootSound;
     public float range = 5f;
     void Start()
     {
-
+        audioSource = GetComponent<AudioSource>();
+        audioSource.clip = shootSound;
     }
 
     // Update is called once per frame
@@ -21,6 +24,7 @@ public class Shooter : MonoBehaviour
 
     void Shoot()
     {
+        audioSource.Play();
         RaycastHit hit;
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, range))
         {
