@@ -75,6 +75,7 @@ public class ZombieBehaviour : MonoBehaviour
     {
         animator.SetBool("run", false);
         agent.isStopped = true;
+        animator.SetTrigger("attack");
         if (!CanAttack())
         {
             currentState = STATE.PURSUE;
