@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Photon.Pun;
 using TMPro;
 using UnityEngine;
 
@@ -21,6 +22,8 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
+        
         if (enemiesSpawned - enemiesKilled <= 0)
         {
             StartRound();

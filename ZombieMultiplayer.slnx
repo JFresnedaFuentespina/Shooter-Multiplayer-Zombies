@@ -6,8 +6,8 @@
   <Project Path="Unity.VisualScripting.Core.Editor.csproj" />
   <Project Path="Unity.PerformanceTesting.Editor.csproj" />
   <Project Path="Unity.Burst.csproj" />
-  <Project Path="Unity.VisualScripting.Flow.Editor.csproj" />
   <Project Path="PhotonRealtime.csproj" />
+  <Project Path="Unity.VisualScripting.Flow.Editor.csproj" />
   <Project Path="Unity.VisualStudio.Editor.csproj" />
   <Project Path="Unity.InputSystem.csproj" />
   <Project Path="PhotonUnityNetworking.Editor.csproj" />

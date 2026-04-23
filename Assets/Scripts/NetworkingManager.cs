@@ -61,4 +61,9 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
         PhotonNetwork.CreateRoom(roomName, roomOptions);
         Debug.Log("Sala creada: " + roomName);
     }
+
+    public override void OnJoinedRoom()
+    {
+        PhotonNetwork.LoadLevel("GameOnline");
+    }
 }
