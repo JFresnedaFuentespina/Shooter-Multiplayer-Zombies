@@ -11,7 +11,14 @@ public class MouseLook : MonoBehaviour
     private float verticalRotation = 0f;
     public PhotonView photonView;
 
-    void Start() { }
+    private GameOverManager gameOverManager;
+    private PauseManager pauseManager;
+
+    void Start()
+    {
+        gameOverManager = FindAnyObjectByType<GameOverManager>();
+        pauseManager = FindAnyObjectByType<PauseManager>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -23,8 +30,8 @@ public class MouseLook : MonoBehaviour
             return;
         }
 
-        if (PauseManager.Instance.isPaused) return;
-        if (GameOverManager.Instance.isPaused) return;
+        if (gameOverManager.isPaused) return;
+        if (pauseManager.isPaused) return;
 
         float mouseX = Input.GetAxis("Mouse X");
         float mouseY = Input.GetAxis("Mouse Y");

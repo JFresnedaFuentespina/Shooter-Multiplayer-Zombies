@@ -9,10 +9,8 @@ public class GameOverManager : MonoBehaviour
     public Button restart;
     public Button exit;
     public bool isPaused = false;
-    public static GameOverManager Instance { get; private set; }
     void Start()
     {
-        Instance = this;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 

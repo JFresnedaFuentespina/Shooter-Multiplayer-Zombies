@@ -12,11 +12,18 @@ public class Shooter : MonoBehaviour
     public Animator animator;
     public float range = 100f;
     public PhotonView photonView;
+
+    private GameOverManager gameOverManager;
+    private PauseManager pauseManager;
+
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = shootSound;
         muzzleFlashParticleSystem = muzzleFlash.GetComponent<ParticleSystem>();
+
+        gameOverManager = FindAnyObjectByType<GameOverManager>();
+        pauseManager = FindAnyObjectByType<PauseManager>();
     }
 
     // Update is called once per frame
@@ -24,9 +31,9 @@ public class Shooter : MonoBehaviour
     {
         // estar online y photonview no nos pertenece
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;
-        
-        if (PauseManager.Instance.isPaused) return;
-        if (GameOverManager.Instance.isPaused) return;
+
+        if (gameOverManager.isPaused) return;
+        if (pauseManager.isPaused) return;
 
         if (Input.GetMouseButtonDown(0))
         {

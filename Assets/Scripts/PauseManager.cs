@@ -9,10 +9,8 @@ public class PauseManager : MonoBehaviour
     public Button resume;
     public Button exit;
     public bool isPaused = false;
-    public static PauseManager Instance { get; private set; }
     void Start()
     {
-        Instance = this;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
