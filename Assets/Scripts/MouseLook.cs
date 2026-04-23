@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class MouseLook : MonoBehaviour
@@ -8,12 +9,20 @@ public class MouseLook : MonoBehaviour
     public Transform gunTransform;
     public float mouseSensitivity = 2f;
     private float verticalRotation = 0f;
+    public PhotonView photonView;
 
     void Start() { }
 
     // Update is called once per frame
     void Update()
     {
+        // estar online y photonview no nos pertenece
+        if (PhotonNetwork.InRoom && !photonView.IsMine)
+        {
+            cameraTransform.gameObject.SetActive(false);
+            return;
+        }
+
         if (PauseManager.Instance.isPaused) return;
         if (GameOverManager.Instance.isPaused) return;
 

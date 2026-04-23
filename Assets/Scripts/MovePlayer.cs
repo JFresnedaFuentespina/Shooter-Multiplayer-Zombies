@@ -1,4 +1,5 @@
 using UnityEngine;
+using Photon.Pun;
 
 public class MovePlayer : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class MovePlayer : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity;
     private GameOverManager gameOverManager;
-
+    public PhotonView photonView;
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -22,6 +23,12 @@ public class MovePlayer : MonoBehaviour
 
     void Update()
     {
+        // estar online y photonview no nos pertenece
+        if (PhotonNetwork.InRoom && !photonView.IsMine)
+        {
+            return;
+        }
+
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 

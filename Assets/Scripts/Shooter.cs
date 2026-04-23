@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class Shooter : MonoBehaviour
@@ -10,6 +11,7 @@ public class Shooter : MonoBehaviour
     public AudioClip shootSound;
     public Animator animator;
     public float range = 100f;
+    public PhotonView photonView;
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
@@ -20,6 +22,9 @@ public class Shooter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // estar online y photonview no nos pertenece
+        if (PhotonNetwork.InRoom && !photonView.IsMine) return;
+        
         if (PauseManager.Instance.isPaused) return;
         if (GameOverManager.Instance.isPaused) return;
 

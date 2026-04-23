@@ -23,7 +23,7 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
-        
+
         if (enemiesSpawned - enemiesKilled <= 0)
         {
             StartRound();
