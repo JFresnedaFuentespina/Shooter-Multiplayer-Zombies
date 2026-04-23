@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using Photon.Pun;
 using TMPro;
 using UnityEngine;
+using Photon.Realtime;
+using Hashtable = ExitGames.Client.Photon.Hashtable;
 
-public class GameManager : MonoBehaviour
+public class GameManager : MonoBehaviourPunCallbacks
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public int enemiesToSpawn;
@@ -14,7 +16,7 @@ public class GameManager : MonoBehaviour
     public float spawnDelay = 2f;
     public List<GameObject> zombieSpawns;
     public TextMeshProUGUI roundText;
-
+    public PhotonView photonView;
     void Start()
     {
         StartRound();
@@ -22,11 +24,12 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
-
-        if (enemiesSpawned - enemiesKilled <= 0)
+        if (!PhotonNetwork.InRoom || (PhotonNetwork.IsMasterClient && photonView.IsMine))
         {
-            StartRound();
+            if (enemiesSpawned - enemiesKilled <= 0)
+            {
+                StartRound();
+            }
         }
     }
 
@@ -36,8 +39,22 @@ public class GameManager : MonoBehaviour
     {
         round++;
         enemiesToSpawn = round * 5;
-        roundText.text = "Round: " + round;
+        if (PhotonNetwork.InRoom)
+        {
+            Hashtable hash = new Hashtable();
+            hash.Add("currentRound", round);
+            PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+        }
+        else
+        {
+            DisplayNextRound(round);
+        }
         StartCoroutine(SpawnZombiesWithDelay(enemiesToSpawn));
+    }
+
+    private void DisplayNextRound(int round)
+    {
+        roundText.text = "Round: " + round;
     }
 
     private IEnumerator SpawnZombiesWithDelay(int count)
@@ -53,9 +70,19 @@ public class GameManager : MonoBehaviour
     public void SpawnZombie()
     {
         if (zombieSpawns.Count == 0) return;
-
         int spawnIndex = Random.Range(0, zombieSpawns.Count);
-        zombieSpawns[spawnIndex].GetComponent<ZombieSpawner>().SpawnZombie();
+        zombieSpawns[spawnIndex].GetComponent<ZombieSpawner>().SpawnZombie(zombieSpawns[spawnIndex].transform.position);
         enemiesSpawned++;
+    }
+
+    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    {
+        if (photonView.IsMine)
+        {
+            if (changedProps["currentRound"] != null)
+            {
+                DisplayNextRound((int)changedProps["currentRound"]);
+            }
+        }
     }
 }

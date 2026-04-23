@@ -1,12 +1,17 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class ZombieSpawner : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    public GameObject zombiePrefab;
-
-    public void SpawnZombie()
+    public void SpawnZombie(Vector3 position)
     {
-        Instantiate(zombiePrefab, transform.position, transform.rotation);
+        if (PhotonNetwork.InRoom)
+        {
+            PhotonNetwork.Instantiate("Zombie", position, Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(Resources.Load("Zombie"), position, Quaternion.identity);
+        }
     }
 }
