@@ -31,6 +31,7 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
         createRoom.onClick.AddListener(MakeRoom);
 
         play.interactable = false;
+        createRoom.interactable = false;
 
         if (PhotonNetwork.IsConnected)
             StartCoroutine(WaitForJoinLobby());
@@ -50,7 +51,6 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
 
     void Exit()
     {
-        PhotonNetwork.Disconnect();
         SceneManager.LoadScene("MainMenu");
     }
 
@@ -62,6 +62,7 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
     public override void OnJoinedLobby()
     {
         Debug.Log("Conectado al lobby");
+        createRoom.interactable = true;
     }
 
     void MakeRoom()

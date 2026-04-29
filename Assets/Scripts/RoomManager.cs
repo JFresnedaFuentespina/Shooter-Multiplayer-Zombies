@@ -41,6 +41,9 @@ public class RoomManager : MonoBehaviourPunCallbacks
         {
             // Online
             PhotonNetwork.Instantiate("First_Person_Player", spawnPosition, Quaternion.identity);
+            
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+            PhotonNetwork.CurrentRoom.IsVisible = false;
         }
         else
         {

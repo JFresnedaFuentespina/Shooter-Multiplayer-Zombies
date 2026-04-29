@@ -10,6 +10,7 @@ public class PauseManager : MonoBehaviour
     public Button resume;
     public Button exit;
     public bool isPaused = false;
+    public PhotonView photonView;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -62,11 +63,23 @@ public class PauseManager : MonoBehaviour
     void ExitGame()
     {
         if (PhotonNetwork.IsMasterClient)
+        {
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            photonView.RPC("ForceExitToMenu", RpcTarget.All, photonView.ViewID);
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
 
-        if (PhotonNetwork.InRoom)
+    [PunRPC]
+    public void ForceExitToMenu(int viewId)
+    {
+        if (photonView.ViewID == viewId)
+        {
             PhotonNetwork.LeaveRoom();
-
-        SceneManager.LoadScene("MainMenu");
+            SceneManager.LoadScene("MainMenu");
+        }
     }
 }
