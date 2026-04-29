@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -38,8 +39,10 @@ public class PauseManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+        
+        if (!PhotonNetwork.InRoom)
+            Time.timeScale = 0f; // Pause the game
 
-        Time.timeScale = 0f; // Pause the game
         pauseMenu.SetActive(true); // Show the pause menu
         isPaused = true;
     }
@@ -49,7 +52,9 @@ public class PauseManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Time.timeScale = 1f; // Resume the game
+        if (!PhotonNetwork.InRoom)
+            Time.timeScale = 1f; // Resume the game
+
         pauseMenu.SetActive(false); // Hide the pause menu
         isPaused = false;
     }

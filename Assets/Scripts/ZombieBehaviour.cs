@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,9 +15,12 @@ public class ZombieBehaviour : MonoBehaviour
     private enum STATE { IDLE, PURSUE, ATTACK, DIE }
     private STATE currentState = STATE.IDLE;
     public bool alreadyDead = false;
+    private List<GameObject> playersInScene;
 
     void Start()
     {
+        playersInScene = new List<GameObject>(GameObject.FindGameObjectsWithTag("Player"));
+
         zombieLife = GetComponent<ZombieLife>();
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         agent = GetComponent<NavMeshAgent>();
@@ -26,6 +31,8 @@ public class ZombieBehaviour : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient) return;
+
         if (!zombieLife.isAlive && !alreadyDead)
         {
             Stop();
@@ -61,6 +68,7 @@ public class ZombieBehaviour : MonoBehaviour
 
     void Pursue()
     {
+        FindClosestPlayer();
         animator.SetBool("run", true);
         agent.speed = moveSpeed;
         agent.isStopped = false;
@@ -96,5 +104,21 @@ public class ZombieBehaviour : MonoBehaviour
     {
         animator.SetBool("run", false);
         agent.isStopped = true;
+    }
+
+    private void FindClosestPlayer()
+    {
+        float closestDistance = Mathf.Infinity;
+        GameObject closestPlayer = null;
+        foreach (GameObject player in playersInScene)
+        {
+            float distance = Vector3.Distance(transform.position, player.transform.position);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestPlayer = player;
+            }
+        }
+        playerTransform = closestPlayer.transform;
     }
 }

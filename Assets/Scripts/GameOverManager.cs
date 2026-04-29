@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -23,7 +24,10 @@ public class GameOverManager : MonoBehaviour
         gameOverMenu.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        Time.timeScale = 0f; // Pause the game
+
+        if (!PhotonNetwork.InRoom)
+            Time.timeScale = 0f;
+
         isPaused = true;
     }
 
