@@ -36,10 +36,11 @@ public class ZombieLife : MonoBehaviour
 
     private void Die()
     {
+        isAlive = false;
+        Destroy(gameObject, 2.6f);
+        
         if (!PhotonNetwork.InRoom || (PhotonNetwork.IsMasterClient && photonView.IsMine))
         {
-            isAlive = false;
-            Destroy(gameObject, 2.6f);
             gameManager.enemiesKilled++;
         }
 
