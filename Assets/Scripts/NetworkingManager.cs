@@ -1,3 +1,4 @@
+using System.Collections;
 using Photon.Pun;
 using Photon.Realtime;
 using UnityEngine;
@@ -10,6 +11,11 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
     public Button exit;
     void Start()
     {
+        if (PhotonNetwork.IsConnected)
+        {
+            StartCoroutine(DisconnectPlayer());
+        }
+
         play.onClick.AddListener(FindMatch);
         exit.onClick.AddListener(Exit);
 
@@ -18,8 +24,20 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
         PhotonNetwork.ConnectUsingSettings();
     }
 
+    IEnumerator DisconnectPlayer()
+    {
+        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.Disconnect();
+
+        while (PhotonNetwork.IsConnected)
+        {
+            yield return null;
+        }
+    }
+
     void Exit()
     {
+        PhotonNetwork.Disconnect();
         SceneManager.LoadScene("MainMenu");
     }
 
