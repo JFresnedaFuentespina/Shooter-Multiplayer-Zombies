@@ -24,6 +24,11 @@ public class MovePlayer : MonoBehaviour
         controller = GetComponent<CharacterController>();
         gameOverManager = FindAnyObjectByType<GameOverManager>();
         healthText.text = health.ToString();
+
+        if(PhotonNetwork.InRoom && !photonView.IsMine)
+        {
+            controller.enabled = false;
+        }
     }
 
     void Update()
