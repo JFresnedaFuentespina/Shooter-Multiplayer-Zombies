@@ -43,11 +43,15 @@ public class Shooter : MonoBehaviour
 
     void Shoot()
     {
-        audioSource.Play();
+        if (PhotonNetwork.InRoom)
+        {
+            photonView.RPC("ShootVFX", RpcTarget.All, photonView.ViewID);
+        }
+        else
+        {
+            ShootVFX(photonView.ViewID);
+        }
         animator.SetTrigger("Shoot");
-
-        muzzleFlashParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-        muzzleFlashParticleSystem.Play();
 
         RaycastHit hit;
         if (Physics.Raycast(playerCamera.transform.position, playerCamera.transform.forward, out hit, range))
@@ -58,6 +62,17 @@ public class Shooter : MonoBehaviour
             {
                 zombie.TakeDamage(50f);
             }
+        }
+    }
+
+    [PunRPC]
+    public void ShootVFX(int viewId)
+    {
+        if (photonView.ViewID == viewId)
+        {
+            audioSource.Play();
+            muzzleFlashParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            muzzleFlashParticleSystem.Play();
         }
     }
 }
