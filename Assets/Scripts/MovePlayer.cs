@@ -19,7 +19,6 @@ public class MovePlayer : MonoBehaviour
     private GameOverManager gameOverManager;
     public PhotonView photonView;
     public TextMeshProUGUI healthText;
-    public GameObject activeWeapon;
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -109,5 +108,6 @@ public class MovePlayer : MonoBehaviour
         {
             gameOverManager.ShowMenu();
         }
+        Destroy(gameObject);
     }
 }

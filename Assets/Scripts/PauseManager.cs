@@ -24,7 +24,7 @@ public class PauseManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (Time.timeScale == 1f)
+            if (!isPaused)
             {
                 PauseGame();
             }
