@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviourPunCallbacks
     private void DisplayNextRound(int round)
     {
         roundText.text = "Round: " + round;
+        Debug.Log("Round: " + round);
     }
 
     private IEnumerator SpawnZombiesWithDelay(int count)

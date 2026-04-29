@@ -14,7 +14,7 @@ public class MovePlayer : MonoBehaviour
 
     public float health = 100f;
 
-    private CharacterController controller;
+    public CharacterController controller;
     private Vector3 velocity;
     private GameOverManager gameOverManager;
     public PhotonView photonView;
@@ -25,7 +25,7 @@ public class MovePlayer : MonoBehaviour
         gameOverManager = FindAnyObjectByType<GameOverManager>();
         healthText.text = health.ToString();
 
-        if(PhotonNetwork.InRoom && !photonView.IsMine)
+        if (PhotonNetwork.InRoom && !photonView.IsMine)
         {
             controller.enabled = false;
         }

@@ -1,6 +1,7 @@
-using System.Collections;
+using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,30 +10,26 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
 {
     public Button play;
     public Button exit;
+    public Button createRoom;
+
+    public GameObject roomListContainer;
+    public GameObject roomsPanel;
+    public GameObject roomInfoPrefab;
+    public TMP_InputField roomInputField;
+    public GameObject roomNameText;
+
+    private Dictionary<string, RoomInfo> rooms = new Dictionary<string, RoomInfo>();
+
     void Start()
     {
-        if (PhotonNetwork.IsConnected)
-        {
-            StartCoroutine(DisconnectPlayer());
-        }
-
-        play.onClick.AddListener(FindMatch);
+        play.onClick.AddListener(StartGame);
         exit.onClick.AddListener(Exit);
+        createRoom.onClick.AddListener(MakeRoom);
 
         play.interactable = false;
-        Debug.Log("Conectando al servidor...");
+
+        PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
-    }
-
-    IEnumerator DisconnectPlayer()
-    {
-        PhotonNetwork.LeaveRoom();
-        PhotonNetwork.Disconnect();
-
-        while (PhotonNetwork.IsConnected)
-        {
-            yield return null;
-        }
     }
 
     void Exit()
@@ -43,45 +40,90 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
 
     public override void OnConnectedToMaster()
     {
-        Debug.Log("Conectando a un lobby...");
         PhotonNetwork.JoinLobby();
     }
 
     public override void OnJoinedLobby()
     {
-        Debug.Log("Conectado al lobby!");
-        play.interactable = true;
+        Debug.Log("Conectado al lobby");
     }
 
-    public void FindMatch()
+    void MakeRoom()
     {
-        Debug.Log("Buscando sala...");
-        PhotonNetwork.JoinRandomRoom();
-    }
+        string roomName = roomInputField.text;
 
-    public override void OnJoinRandomFailed(short returnCode, string message)
-    {
-        Debug.Log("No se ha encontrado ninguna sala! Creando una sala...");
-        MakeRoom();
-    }
+        if (string.IsNullOrWhiteSpace(roomName))
+            roomName = "Room_" + Random.Range(1000, 9999);
 
-    private void MakeRoom()
-    {
-        int randomRoomId = Random.Range(0, 5000);
-        RoomOptions roomOptions = new RoomOptions()
+        RoomOptions options = new RoomOptions
         {
-            IsVisible = true,
-            IsOpen = true,
             MaxPlayers = 5,
-            PublishUserId = true
+            IsVisible = true,
+            IsOpen = true
         };
-        string roomName = "Room" + randomRoomId;
-        PhotonNetwork.CreateRoom(roomName, roomOptions);
-        Debug.Log("Sala creada: " + roomName);
+
+        PhotonNetwork.CreateRoom(roomName, options);
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        Debug.Log("Rooms recibidas: " + roomList.Count);
+        foreach (RoomInfo room in roomList)
+        {
+            if (room.RemovedFromList)
+                rooms.Remove(room.Name);
+            else
+                rooms[room.Name] = room;
+        }
+
+        UpdateRoomsUI();
+    }
+
+    void UpdateRoomsUI()
+    {
+        foreach (Transform child in roomsPanel.transform)
+            Destroy(child.gameObject);
+
+        foreach (RoomInfo room in rooms.Values)
+        {
+            GameObject item = Instantiate(roomInfoPrefab, roomsPanel.transform);
+
+            item.transform.Find("RoomName")
+                .GetComponent<TextMeshProUGUI>()
+                .text = room.Name + " (" + room.PlayerCount + "/" + room.MaxPlayers + ")";
+
+            string roomName = room.Name;
+
+            item.transform.Find("Join")
+                .GetComponent<Button>()
+                .onClick.AddListener(() =>
+                {
+                    PhotonNetwork.JoinRoom(roomName);
+                });
+        }
     }
 
     public override void OnJoinedRoom()
     {
-        PhotonNetwork.LoadLevel("GameOnline");
+        if (PhotonNetwork.IsMasterClient)
+        {
+            play.interactable = true;
+        }
+        
+        roomListContainer.SetActive(false);
+        roomNameText.SetActive(true);
+        roomNameText.GetComponent<TextMeshProUGUI>().text = "Sala: " + PhotonNetwork.CurrentRoom.Name;
+        Debug.Log("Entraste en: " + PhotonNetwork.CurrentRoom.Name);
+    }
+
+    public void StartGame()
+    {
+        if (PhotonNetwork.IsMasterClient)
+            PhotonNetwork.LoadLevel("GameOnline");
+    }
+
+    public override void OnLeftRoom()
+    {
+        PhotonNetwork.JoinLobby();
     }
 }
