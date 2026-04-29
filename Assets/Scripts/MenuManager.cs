@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -10,18 +11,23 @@ public class MenuManager : MonoBehaviour
     public NetworkingManager networkingManager;
     void Start()
     {
-        play.onClick.AddListener(RestartGame);
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        play.onClick.AddListener(LoadSinglePlayer);
         exit.onClick.AddListener(ExitGame);
         multiplayer.onClick.AddListener(LoadMultiplayerMenu);
     }
 
-    void RestartGame()
+    void LoadSinglePlayer()
     {
+        PhotonNetwork.AutomaticallySyncScene = false;
         SceneManager.LoadScene("Game");
     }
 
     void LoadMultiplayerMenu()
     {
+        PhotonNetwork.AutomaticallySyncScene = false;
         SceneManager.LoadScene("MultiplayerMenu");
     }
 

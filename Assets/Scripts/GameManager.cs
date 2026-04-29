@@ -33,8 +33,6 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
     }
 
-
-
     public void StartRound()
     {
         round++;
@@ -42,8 +40,9 @@ public class GameManager : MonoBehaviourPunCallbacks
         if (PhotonNetwork.InRoom)
         {
             Hashtable hash = new Hashtable();
-            hash.Add("currentRound", round);
-            PhotonNetwork.LocalPlayer.SetCustomProperties(hash);
+            hash["currentRound"] = round;
+
+            PhotonNetwork.CurrentRoom.SetCustomProperties(hash);
         }
         else
         {
@@ -51,6 +50,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         }
         StartCoroutine(SpawnZombiesWithDelay(enemiesToSpawn));
     }
+
 
     private void DisplayNextRound(int round)
     {
@@ -76,14 +76,12 @@ public class GameManager : MonoBehaviourPunCallbacks
         enemiesSpawned++;
     }
 
-    public override void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProps)
+    public override void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
     {
-        if (photonView.IsMine)
+        if (propertiesThatChanged.ContainsKey("currentRound"))
         {
-            if (changedProps["currentRound"] != null)
-            {
-                DisplayNextRound((int)changedProps["currentRound"]);
-            }
+            int r = (int)propertiesThatChanged["currentRound"];
+            DisplayNextRound(r);
         }
     }
 }

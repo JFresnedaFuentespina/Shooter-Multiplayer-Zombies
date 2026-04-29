@@ -39,7 +39,7 @@ public class PauseManager : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        
+
         if (!PhotonNetwork.InRoom)
             Time.timeScale = 0f; // Pause the game
 
@@ -61,6 +61,12 @@ public class PauseManager : MonoBehaviour
 
     void ExitGame()
     {
+        if (PhotonNetwork.IsMasterClient)
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+
+        if (PhotonNetwork.InRoom)
+            PhotonNetwork.LeaveRoom();
+
         SceneManager.LoadScene("MainMenu");
     }
 }

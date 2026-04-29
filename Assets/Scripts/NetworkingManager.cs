@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using Photon.Realtime;
@@ -22,14 +23,29 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         play.onClick.AddListener(StartGame);
         exit.onClick.AddListener(Exit);
         createRoom.onClick.AddListener(MakeRoom);
 
         play.interactable = false;
 
+        if (PhotonNetwork.IsConnected)
+            StartCoroutine(WaitForJoinLobby());
+
         PhotonNetwork.AutomaticallySyncScene = true;
         PhotonNetwork.ConnectUsingSettings();
+    }
+
+    IEnumerator WaitForJoinLobby()
+    {
+        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.Disconnect();
+
+        while (PhotonNetwork.IsConnected)
+            yield return null;
     }
 
     void Exit()
@@ -109,7 +125,7 @@ public class NetworkingManager : MonoBehaviourPunCallbacks
         {
             play.interactable = true;
         }
-        
+
         roomListContainer.SetActive(false);
         roomNameText.SetActive(true);
         roomNameText.GetComponent<TextMeshProUGUI>().text = "Sala: " + PhotonNetwork.CurrentRoom.Name;

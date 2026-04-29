@@ -38,6 +38,12 @@ public class GameOverManager : MonoBehaviour
 
     void ExitGame()
     {
+        if (PhotonNetwork.IsMasterClient)
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+
+        if (PhotonNetwork.InRoom)
+            PhotonNetwork.LeaveRoom();
+
         SceneManager.LoadScene("MainMenu");
     }
 }
