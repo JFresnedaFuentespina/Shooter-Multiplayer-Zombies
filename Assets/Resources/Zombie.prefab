@@ -1624,6 +1624,7 @@ MonoBehaviour:
   isAlive: 1
   animator: {fileID: 7544459490567584518}
   gameManager: {fileID: 0}
+  photonView: {fileID: 1571139637111812522}
 --- !u!114 &8154286739818900369
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1803,6 +1804,7 @@ MonoBehaviour:
   observableSearch: 2
   ObservedComponents:
   - {fileID: 1212926048625643158}
+  - {fileID: 4869450295152307468}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0

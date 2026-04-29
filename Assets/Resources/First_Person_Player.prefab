@@ -391,7 +391,9 @@ MonoBehaviour:
   gravity: -9.81
   walkSpeed: 5
   runSpeed: 10
+  health: 100
   photonView: {fileID: 2076749099100417400}
+  healthText: {fileID: 5321620922430121734}
 --- !u!114 &3961227895138040608
 MonoBehaviour:
   m_ObjectHideFlags: 0

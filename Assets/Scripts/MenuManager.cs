@@ -17,7 +17,7 @@ public class MenuManager : MonoBehaviour
 
     void RestartGame()
     {
-        SceneManager.LoadScene("SampleScene");
+        SceneManager.LoadScene("Game");
     }
 
     void LoadMultiplayerMenu()

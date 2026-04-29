@@ -1,3 +1,4 @@
+using Photon.Pun;
 using UnityEngine;
 
 public class ZombieLife : MonoBehaviour
@@ -7,6 +8,7 @@ public class ZombieLife : MonoBehaviour
     public bool isAlive = true;
     public Animator animator;
     public GameManager gameManager;
+    public PhotonView photonView;
     void Start()
     {
         gameManager = FindAnyObjectByType<GameManager>();
@@ -14,19 +16,32 @@ public class ZombieLife : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        if (!isAlive) return;
+        photonView.RPC("TakeDamageViewId", RpcTarget.All, damage, photonView.ViewID);
+    }
 
-        health -= damage;
-        if (health <= 0f)
+    [PunRPC]
+    public void TakeDamageViewId(float damage, int viewId)
+    {
+        if (photonView.ViewID == viewId)
         {
-            Die();
+            if (!isAlive) return;
+
+            health -= damage;
+            if (health <= 0f)
+            {
+                Die();
+            }
         }
     }
 
     private void Die()
     {
-        isAlive = false;
-        Destroy(gameObject, 2.6f);
-        gameManager.enemiesKilled++;
+        if (!PhotonNetwork.InRoom || (PhotonNetwork.IsMasterClient && photonView.IsMine))
+        {
+            isAlive = false;
+            Destroy(gameObject, 2.6f);
+            gameManager.enemiesKilled++;
+        }
+
     }
 }

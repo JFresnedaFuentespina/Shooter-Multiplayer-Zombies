@@ -1,5 +1,6 @@
 using UnityEngine;
 using Photon.Pun;
+using TMPro;
 
 public class MovePlayer : MonoBehaviour
 {
@@ -11,14 +12,18 @@ public class MovePlayer : MonoBehaviour
     public float walkSpeed = 5f;
     public float runSpeed = 10f;
 
+    public float health = 100f;
+
     private CharacterController controller;
     private Vector3 velocity;
     private GameOverManager gameOverManager;
     public PhotonView photonView;
+    public TextMeshProUGUI healthText;
     void Start()
     {
         controller = GetComponent<CharacterController>();
         gameOverManager = FindAnyObjectByType<GameOverManager>();
+        healthText.text = health.ToString();
     }
 
     void Update()
@@ -66,10 +71,42 @@ public class MovePlayer : MonoBehaviour
         if (collision.gameObject.CompareTag("Zombie"))
         {
             Debug.Log("Player hit by zombie!");
-            if (gameOverManager != null)
+            Hit(20f);
+        }
+    }
+
+    [PunRPC]
+    public void Hit(float damage)
+    {
+        if (PhotonNetwork.InRoom)
+        {
+            photonView.RPC("PlayerTakeDamage", RpcTarget.All, damage, photonView.ViewID);
+        }
+        else
+        {
+            PlayerTakeDamage(damage, photonView.ViewID);
+        }
+    }
+
+    public void PlayerTakeDamage(float damage, int viewId)
+    {
+        if (photonView.ViewID == viewId)
+        {
+            health -= damage;
+            healthText.text = health.ToString();
+            if (health <= 0f)
             {
-                gameOverManager.ShowMenu();
+                Die();
             }
+        }
+    }
+
+    private void Die()
+    {
+        // Handle player death logic here
+        if (gameOverManager != null)
+        {
+            gameOverManager.ShowMenu();
         }
     }
 }
