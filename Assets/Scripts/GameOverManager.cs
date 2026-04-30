@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -12,13 +13,16 @@ public class GameOverManager : MonoBehaviour
     public Button exit;
     public bool isPaused = false;
     public PhotonView photonView;
+    private List<GameObject> playersInScene;
     void Start()
     {
+        playersInScene = new List<GameObject>();
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
         restart.onClick.AddListener(RestartGame);
         exit.onClick.AddListener(ExitGame);
+        StartCoroutine(FindAlivePlayers());
     }
 
     public void ShowMenu()
@@ -33,9 +37,53 @@ public class GameOverManager : MonoBehaviour
         isPaused = true;
     }
 
+    private IEnumerator FindAlivePlayers()
+    {
+        if (PhotonNetwork.InRoom && !PhotonNetwork.IsMasterClient)
+            yield break;
+
+        while (true)
+        {
+            GameObject[] auxPlayers = GameObject.FindGameObjectsWithTag("Player");
+            playersInScene.Clear();
+
+            foreach (GameObject player in auxPlayers)
+            {
+                Player p = player.GetComponent<Player>();
+                if (p != null && p.currentState == Player.PlayerState.ALIVE)
+                {
+                    playersInScene.Add(player);
+                }
+            }
+
+            if (playersInScene.Count == 0)
+            {
+                photonView.RPC("ShowGameOverForAll", RpcTarget.All);
+                yield break;
+            }
+
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+
+    [PunRPC]
+    public void ShowGameOverForAll()
+    {
+        ShowMenu();
+    }
+
     void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (!PhotonNetwork.InRoom)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            return;
+        }
+
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LoadLevel("GameOnline");
+        }
     }
 
     void ExitGame()
@@ -50,7 +98,7 @@ public class GameOverManager : MonoBehaviour
             SceneManager.LoadScene("MainMenu");
         }
     }
-    
+
     [PunRPC]
     public void ForceExitToMenuGameOver(int viewId)
     {

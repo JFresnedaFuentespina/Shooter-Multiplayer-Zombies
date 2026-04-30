@@ -19,10 +19,12 @@ public class MovePlayer : MonoBehaviour
     private GameOverManager gameOverManager;
     public PhotonView photonView;
     public TextMeshProUGUI healthText;
+    private Player player;
     void Start()
     {
         controller = GetComponent<CharacterController>();
         gameOverManager = FindAnyObjectByType<GameOverManager>();
+        player = GetComponent<Player>();
         healthText.text = health.ToString();
 
         if (PhotonNetwork.InRoom && !photonView.IsMine)
@@ -73,26 +75,15 @@ public class MovePlayer : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        if (!photonView.IsMine) return;
+
         if (collision.gameObject.CompareTag("Zombie"))
         {
-            Debug.Log("Player hit by zombie!");
-            Hit(20f);
+            photonView.RPC("PlayerTakeDamage", RpcTarget.All, 20f, photonView.ViewID);
         }
     }
 
     [PunRPC]
-    public void Hit(float damage)
-    {
-        if (PhotonNetwork.InRoom)
-        {
-            photonView.RPC("PlayerTakeDamage", RpcTarget.All, damage, photonView.ViewID);
-        }
-        else
-        {
-            PlayerTakeDamage(damage, photonView.ViewID);
-        }
-    }
-
     public void PlayerTakeDamage(float damage, int viewId)
     {
         if (photonView.ViewID == viewId)
@@ -113,6 +104,10 @@ public class MovePlayer : MonoBehaviour
         {
             gameOverManager.ShowMenu();
         }
-        Destroy(gameObject);
+        
+        if (photonView.IsMine)
+        {
+            player.currentState = Player.PlayerState.DEAD;
+        }
     }
 }

@@ -77,6 +77,11 @@ public class PauseManager : MonoBehaviour
     [PunRPC]
     public void ForceExitToMenu(int viewId)
     {
+        if(PhotonNetwork.IsMasterClient)
+        {
+            SceneManager.LoadScene("MainMenu");
+            return;
+        }
         if (photonView.ViewID == viewId)
         {
             StartCoroutine(WaitForLeavingRoom());
