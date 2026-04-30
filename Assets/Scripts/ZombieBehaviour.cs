@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Photon.Pun;
 using UnityEngine;
@@ -26,6 +27,8 @@ public class ZombieBehaviour : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         agent.speed = moveSpeed;
         agent.autoBraking = false;
+
+        StartCoroutine(FindClosestPlayer());
     }
 
     // Update is called once per frame
@@ -68,7 +71,8 @@ public class ZombieBehaviour : MonoBehaviour
 
     void Pursue()
     {
-        FindClosestPlayer();
+        if (playerTransform == null) return;
+
         animator.SetBool("run", true);
         agent.speed = moveSpeed;
         agent.isStopped = false;
@@ -106,8 +110,18 @@ public class ZombieBehaviour : MonoBehaviour
         agent.isStopped = true;
     }
 
-    private void FindClosestPlayer()
+    private IEnumerator FindClosestPlayer()
     {
+        GameObject[] auxPlayers = GameObject.FindGameObjectsWithTag("Player");
+        playersInScene.Clear();
+        foreach (GameObject player in auxPlayers)
+        {
+            if (player.GetComponent<Player>().currentState == Player.PlayerState.ALIVE)
+            {
+                playersInScene.Add(player);
+            }
+        }
+
         float closestDistance = Mathf.Infinity;
         GameObject closestPlayer = null;
         foreach (GameObject player in playersInScene)
@@ -120,5 +134,6 @@ public class ZombieBehaviour : MonoBehaviour
             }
         }
         playerTransform = closestPlayer.transform;
+        yield return new WaitForSeconds(0.5f);
     }
 }

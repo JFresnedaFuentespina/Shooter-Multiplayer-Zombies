@@ -1,3 +1,4 @@
+using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,6 +11,7 @@ public class GameOverManager : MonoBehaviour
     public Button restart;
     public Button exit;
     public bool isPaused = false;
+    public PhotonView photonView;
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -39,11 +41,32 @@ public class GameOverManager : MonoBehaviour
     void ExitGame()
     {
         if (PhotonNetwork.IsMasterClient)
+        {
             PhotonNetwork.CurrentRoom.IsOpen = false;
+            photonView.RPC("ForceExitToMenuGameOver", RpcTarget.All, photonView.ViewID);
+        }
+        else
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
+    
+    [PunRPC]
+    public void ForceExitToMenuGameOver(int viewId)
+    {
+        if (photonView.ViewID == viewId)
+        {
+            StartCoroutine(WaitForLeavingRoom());
+            SceneManager.LoadScene("MainMenu");
+        }
+    }
 
-        if (PhotonNetwork.InRoom)
-            PhotonNetwork.LeaveRoom();
+    IEnumerator WaitForLeavingRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+        // PhotonNetwork.Disconnect();
 
-        SceneManager.LoadScene("MainMenu");
+        while (PhotonNetwork.InRoom)
+            yield return null;
     }
 }

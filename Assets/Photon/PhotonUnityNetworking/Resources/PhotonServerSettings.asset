@@ -44,6 +44,7 @@ MonoBehaviour:
   - WeaponShootVFX
   - ShootVFX
   - ForceExitToMenu
+  - ForceExitToMenuGameOver
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 1

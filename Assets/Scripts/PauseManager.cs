@@ -1,3 +1,4 @@
+using System.Collections;
 using Photon.Pun;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -69,7 +70,7 @@ public class PauseManager : MonoBehaviour
         }
         else
         {
-            SceneManager.LoadScene("MainMenu");
+            ForceExitToMenu(photonView.ViewID);
         }
     }
 
@@ -78,8 +79,18 @@ public class PauseManager : MonoBehaviour
     {
         if (photonView.ViewID == viewId)
         {
-            PhotonNetwork.LeaveRoom();
-            SceneManager.LoadScene("MainMenu");
+            StartCoroutine(WaitForLeavingRoom());
         }
+    }
+
+    IEnumerator WaitForLeavingRoom()
+    {
+        PhotonNetwork.LeaveRoom();
+        PhotonNetwork.Disconnect();
+
+        while (PhotonNetwork.InRoom)
+            yield return null;
+
+        SceneManager.LoadScene("MainMenu");
     }
 }
