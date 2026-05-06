@@ -15,12 +15,14 @@ public class Shooter : MonoBehaviour
 
     private GameOverManager gameOverManager;
     private PauseManager pauseManager;
+    private Player player;
 
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
         audioSource.clip = shootSound;
         muzzleFlashParticleSystem = muzzleFlash.GetComponent<ParticleSystem>();
+        player = GetComponent<Player>();
 
         gameOverManager = FindAnyObjectByType<GameOverManager>();
         pauseManager = FindAnyObjectByType<PauseManager>();
@@ -31,6 +33,7 @@ public class Shooter : MonoBehaviour
     {
         // estar online y photonview no nos pertenece
         if (PhotonNetwork.InRoom && !photonView.IsMine) return;
+        if(player.currentState == Player.PlayerState.DEAD) return;
 
         if (gameOverManager.isPaused) return;
         if (pauseManager.isPaused) return;

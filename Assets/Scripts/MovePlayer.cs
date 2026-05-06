@@ -16,14 +16,12 @@ public class MovePlayer : MonoBehaviour
 
     public CharacterController controller;
     private Vector3 velocity;
-    private GameOverManager gameOverManager;
     public PhotonView photonView;
     public TextMeshProUGUI healthText;
     private Player player;
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        gameOverManager = FindAnyObjectByType<GameOverManager>();
         player = GetComponent<Player>();
         healthText.text = health.ToString();
 
@@ -35,6 +33,7 @@ public class MovePlayer : MonoBehaviour
 
     void Update()
     {
+        if(player.currentState == Player.PlayerState.DEAD) return;
         // estar online y photonview no nos pertenece
         if (PhotonNetwork.InRoom && !photonView.IsMine)
         {
@@ -76,6 +75,7 @@ public class MovePlayer : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if (!photonView.IsMine) return;
+        if(player.currentState == Player.PlayerState.DEAD) return;
 
         if (collision.gameObject.CompareTag("Zombie"))
         {
@@ -92,22 +92,9 @@ public class MovePlayer : MonoBehaviour
             healthText.text = health.ToString();
             if (health <= 0f)
             {
-                Die();
+                player.currentState = Player.PlayerState.DEAD;
+                controller.enabled = false;
             }
-        }
-    }
-
-    private void Die()
-    {
-        // Handle player death logic here
-        if (gameOverManager != null)
-        {
-            gameOverManager.ShowMenu();
-        }
-        
-        if (photonView.IsMine)
-        {
-            player.currentState = Player.PlayerState.DEAD;
         }
     }
 }

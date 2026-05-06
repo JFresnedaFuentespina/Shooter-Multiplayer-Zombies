@@ -13,7 +13,7 @@ public class ZombieBehaviour : MonoBehaviour
     public ZombieLife zombieLife;
     public float moveSpeed = 5f;
     public float attackRange = 1.5f;
-    private enum STATE { IDLE, PURSUE, ATTACK, DIE }
+    private enum STATE { IDLE, PURSUE, ATTACK, DIE, STOP}
     private STATE currentState = STATE.IDLE;
     public bool alreadyDead = false;
     private List<GameObject> playersInScene;
@@ -60,6 +60,9 @@ public class ZombieBehaviour : MonoBehaviour
                 break;
             case STATE.ATTACK:
                 Attack();
+                break;
+            case STATE.STOP:
+                Stop();
                 break;
         }
     }
@@ -109,7 +112,7 @@ public class ZombieBehaviour : MonoBehaviour
         animator.SetBool("run", false);
         agent.isStopped = true;
     }
-
+    
     private IEnumerator FindClosestPlayer()
     {
         GameObject[] auxPlayers = GameObject.FindGameObjectsWithTag("Player");
@@ -133,7 +136,15 @@ public class ZombieBehaviour : MonoBehaviour
                 closestPlayer = player;
             }
         }
-        playerTransform = closestPlayer.transform;
+        if(closestPlayer != null)
+        {
+            playerTransform = closestPlayer.transform;
+        }
+        else
+        {
+            playerTransform = null;
+            currentState = STATE.STOP;
+        }
         yield return new WaitForSeconds(0.5f);
     }
 }

@@ -58,7 +58,7 @@ public class GameOverManager : MonoBehaviour
 
             if (playersInScene.Count == 0)
             {
-                photonView.RPC("ShowGameOverForAll", RpcTarget.All);
+                ShowMenu();
                 yield break;
             }
 
@@ -66,7 +66,6 @@ public class GameOverManager : MonoBehaviour
         }
     }
 
-    [PunRPC]
     public void ShowGameOverForAll()
     {
         ShowMenu();
@@ -82,7 +81,7 @@ public class GameOverManager : MonoBehaviour
 
         if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.LoadLevel("GameOnline");
+            photonView.RPC("ForceRestartGameOver", RpcTarget.All, photonView.ViewID);
         }
     }
 
@@ -96,6 +95,14 @@ public class GameOverManager : MonoBehaviour
         else
         {
             SceneManager.LoadScene("MainMenu");
+        }
+    }
+
+    [PunRPC]
+    public void ForceRestartGameOver(int viewId){
+        if(photonView.ViewID == viewId)
+        {    
+            SceneManager.LoadScene("GameOnline");
         }
     }
 
